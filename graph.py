@@ -9,12 +9,19 @@ from agents import (
 from tools import search_web, scrape_url
 import datetime
 
+# --- Helper Functions ---
+def parse_content(content):
+    """Safely parse LLM output content which can be a string or a list of dicts (Gemini)."""
+    if isinstance(content, list):
+        return "".join([item.get("text", "") for item in content if isinstance(item, dict)])
+    return str(content)
+
 # --- Node Functions ---
 
 def researcher_node(state: FactCourtState):
     """Gathers evidence via search and scraping."""
     llm = get_llm(state['provider'], state['api_key'])
-    queries_text = llm.invoke(RESEARCH_PROMPT.format(claim=state['claim'])).content
+    queries_text = parse_content(llm.invoke(RESEARCH_PROMPT.format(claim=state['claim'])).content)
     queries = [q.strip() for q in queries_text.split(',') if q.strip()]
     
     ledger = []
@@ -36,69 +43,69 @@ def researcher_node(state: FactCourtState):
 def topic_router(state: FactCourtState):
     """Decides if an expert is needed."""
     llm = get_llm(state['provider'], state['api_key'])
-    ans = llm.invoke(ROUTER_PROMPT.format(claim=state['claim'])).content.strip().lower()
+    ans = parse_content(llm.invoke(ROUTER_PROMPT.format(claim=state['claim'])).content).strip().lower()
     needs_expert = 'yes' in ans
     return {"needs_expert": needs_expert}
 
 def expert_node(state: FactCourtState):
     """Provides expert brief."""
     llm = get_llm(state['provider'], state['api_key'])
-    brief = llm.invoke(EXPERT_PROMPT.format(claim=state['claim'])).content
+    brief = parse_content(llm.invoke(EXPERT_PROMPT.format(claim=state['claim'])).content)
     return {"expert_brief": brief}
 
 def supporter_node(state: FactCourtState):
     llm = get_llm(state['provider'], state['api_key'])
-    arg = llm.invoke(SUPPORTER_PROMPT.format(
+    arg = parse_content(llm.invoke(SUPPORTER_PROMPT.format(
         claim=state['claim'], 
         ledger=json.dumps(state['provenance_ledger']),
         expert_brief=state.get('expert_brief', 'None')
-    )).content
+    )).content)
     return {"supporter_argument": arg}
 
 def skeptic_cross_exam_node(state: FactCourtState):
     llm = get_llm(state['provider'], state['api_key'])
-    arg = llm.invoke(SKEPTIC_CROSS_EXAM_PROMPT.format(
+    arg = parse_content(llm.invoke(SKEPTIC_CROSS_EXAM_PROMPT.format(
         argument=state['supporter_argument'],
         ledger=json.dumps(state['provenance_ledger'])
-    )).content
+    )).content)
     return {"skeptic_cross_exam": arg}
 
 def skeptic_node(state: FactCourtState):
     llm = get_llm(state['provider'], state['api_key'])
-    arg = llm.invoke(SKEPTIC_PROMPT.format(
+    arg = parse_content(llm.invoke(SKEPTIC_PROMPT.format(
         claim=state['claim'], 
         ledger=json.dumps(state['provenance_ledger']),
         expert_brief=state.get('expert_brief', 'None')
-    )).content
+    )).content)
     return {"skeptic_argument": arg}
 
 def supporter_cross_exam_node(state: FactCourtState):
     llm = get_llm(state['provider'], state['api_key'])
-    arg = llm.invoke(SUPPORTER_CROSS_EXAM_PROMPT.format(
+    arg = parse_content(llm.invoke(SUPPORTER_CROSS_EXAM_PROMPT.format(
         argument=state['skeptic_argument'],
         ledger=json.dumps(state['provenance_ledger'])
-    )).content
+    )).content)
     return {"supporter_cross_exam": arg}
 
 def validator_node(state: FactCourtState):
     llm = get_llm(state['provider'], state['api_key'])
-    validation = llm.invoke(VALIDATOR_PROMPT.format(
+    validation = parse_content(llm.invoke(VALIDATOR_PROMPT.format(
         ledger=json.dumps(state['provenance_ledger']),
         supporter_arg=state['supporter_argument'],
         skeptic_arg=state['skeptic_argument']
-    )).content
+    )).content)
     
     is_valid = 'yes' not in validation.lower()
     return {"is_valid_evidence": is_valid, "validation_notes": validation}
 
 def evaluator_node(state: FactCourtState):
     llm = get_llm(state['provider'], state['api_key'])
-    verdict_raw = llm.invoke(EVALUATOR_PROMPT.format(
+    verdict_raw = parse_content(llm.invoke(EVALUATOR_PROMPT.format(
         claim=state['claim'],
         supporter_arg=state['supporter_argument'],
         skeptic_arg=state['skeptic_argument'],
         ledger=json.dumps(state['provenance_ledger'])
-    )).content
+    )).content)
     
     return {
         "final_verdict": "Verdict: " + verdict_raw[:100], 
