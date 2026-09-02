@@ -10,7 +10,7 @@ def get_llm(provider: str, api_key: str):
     if provider == "OpenAI":
         return ChatOpenAI(model="gpt-4o-mini", api_key=api_key, temperature=0.2)
     elif provider == "Google Gemini":
-        return ChatGoogleGenerativeAI(model="gemini-1.5-flash", api_key=api_key, temperature=0.2)
+        return ChatGoogleGenerativeAI(model="gemini-3.5-flash", api_key=api_key, temperature=0.2)
     elif provider == "Hugging Face":
         # Note: ChatHuggingFace usually wraps a HuggingFaceEndpoint
         from langchain_huggingface import HuggingFaceEndpoint
