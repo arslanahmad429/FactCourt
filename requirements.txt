@@ -1,0 +1,14 @@
+streamlit
+langgraph
+langchain
+langchain-openai
+langchain-google-genai
+langchain-huggingface
+langchain-community
+langchain-pinecone
+pinecone-client
+pydantic
+beautifulsoup4
+requests
+duckduckgo-search
+python-dotenv
