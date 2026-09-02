@@ -8,12 +8,30 @@ import time
 
 load_dotenv()
 
-# Initialize Pinecone
-pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
+# We will initialize Pinecone lazily inside functions to prevent import crashes
+# if the environment variables aren't loaded yet on Streamlit Cloud.
 index_name = os.getenv("PINECONE_INDEX_NAME", "fact-court-db")
+
+def get_pinecone_client():
+    """Lazily load the Pinecone client, checking Streamlit secrets if needed."""
+    api_key = os.getenv("PINECONE_API_KEY")
+    
+    # Fallback for Streamlit Cloud secrets just in case
+    if not api_key:
+        try:
+            import streamlit as st
+            api_key = st.secrets.get("PINECONE_API_KEY")
+        except Exception:
+            pass
+            
+    if not api_key:
+        raise ValueError("PINECONE_API_KEY is not set. Please add it to your Streamlit Secrets.")
+        
+    return Pinecone(api_key=api_key)
 
 def ensure_pinecone_index():
     """Ensure the Pinecone index exists."""
+    pc = get_pinecone_client()
     if index_name not in pc.list_indexes().names():
         try:
             pc.create_index(
