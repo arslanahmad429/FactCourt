@@ -6,7 +6,7 @@ langchain-google-genai
 langchain-huggingface
 langchain-community
 langchain-pinecone
-pinecone-client
+pinecone
 pydantic
 beautifulsoup4
 requests
