@@ -17,8 +17,10 @@ api_key = st.sidebar.text_input(f"Enter {provider} API Key", type="password")
 st.title("Fact Court")
 st.markdown("Enter your query below. The Fact Court will investigate, debate , investigate , cross check , credibility check ,  scrutiny , arugument , historical referencing , compliance  and deliver a verdict based on facts , real life realities , logical facts , data ,reasoning and rules and regulations .")
 
+import base64
+
 claim = st.text_area("Enter what you want to findout here...")
-image_upload = st.file_uploader("Optional: Upload image evidence", type=["jpg", "png"])
+image_upload = st.file_uploader("Optional: Upload image evidence", type=["jpg", "png", "jpeg"])
 
 if st.button("Submit to Court"):
     if not api_key:
@@ -26,6 +28,12 @@ if st.button("Submit to Court"):
     elif not claim:
         st.warning("Please enter a claim.")
     else:
+        # Handle Image
+        image_b64 = None
+        if image_upload:
+            image_bytes = image_upload.read()
+            image_b64 = base64.b64encode(image_bytes).decode("utf-8")
+            
         # Initialize DB
         with st.spinner("Initializing Global Court Records (Pinecone)..."):
             try:
@@ -38,6 +46,7 @@ if st.button("Submit to Court"):
         
         initial_state = {
             "claim": claim,
+            "image_data": image_b64,
             "provider": provider,
             "api_key": api_key,
             "iterations": 0

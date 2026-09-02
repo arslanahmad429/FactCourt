@@ -8,6 +8,7 @@ from agents import (
 )
 from tools import search_web, scrape_url
 import datetime
+from langchain_core.messages import HumanMessage
 
 # --- Helper Functions ---
 def parse_content(content):
@@ -16,12 +17,26 @@ def parse_content(content):
         return "".join([item.get("text", "") for item in content if isinstance(item, dict)])
     return str(content)
 
+def build_prompt(prompt_text, state):
+    """Builds a multimodal prompt if image exists, otherwise returns text."""
+    image_b64 = state.get("image_data")
+    if not image_b64:
+        return prompt_text
+    return [
+        HumanMessage(content=[
+            {"type": "text", "text": prompt_text},
+            {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_b64}"}}
+        ])
+    ]
+
 # --- Node Functions ---
 
 def researcher_node(state: FactCourtState):
     """Gathers evidence via search and scraping."""
     llm = get_llm(state['provider'], state['api_key'])
-    queries_text = parse_content(llm.invoke(RESEARCH_PROMPT.format(claim=state['claim'])).content)
+    
+    prompt = build_prompt(RESEARCH_PROMPT.format(claim=state['claim']), state)
+    queries_text = parse_content(llm.invoke(prompt).content)
     queries = [q.strip() for q in queries_text.split(',') if q.strip()]
     
     ledger = []
@@ -100,12 +115,15 @@ def validator_node(state: FactCourtState):
 
 def evaluator_node(state: FactCourtState):
     llm = get_llm(state['provider'], state['api_key'])
-    verdict_raw = parse_content(llm.invoke(EVALUATOR_PROMPT.format(
+    
+    prompt = build_prompt(EVALUATOR_PROMPT.format(
         claim=state['claim'],
         supporter_arg=state['supporter_argument'],
         skeptic_arg=state['skeptic_argument'],
         ledger=json.dumps(state['provenance_ledger'])
-    )).content)
+    ), state)
+    
+    verdict_raw = parse_content(llm.invoke(prompt).content)
     
     return {
         "final_verdict": "Verdict: " + verdict_raw[:100], 
