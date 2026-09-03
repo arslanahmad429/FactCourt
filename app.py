@@ -17,7 +17,7 @@ api_key = st.sidebar.text_input(f"Enter {provider} API Key", type="password")
 st.sidebar.markdown("---")
 @st.dialog("Fact Court Architecture Flowchart")
 def show_architecture_video():
-    st.video("architecture_flowchart.mp4")
+    st.video("https://github.com/user-attachments/assets/d387a34e-5ebb-41da-bb41-4a6130509a58")
 
 if st.sidebar.button("🎥 View Architecture Video"):
     show_architecture_video()
