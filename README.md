@@ -1,4 +1,8 @@
-# Fact Court ⚖️
+# Fact Court 
+
+https://github.com/user-attachments/assets/d387a34e-5ebb-41da-bb41-4a6130509a58
+
+
 
 Fact Court is an AI-powered, multi-agent courtroom that investigates claims, gathers evidence via web scraping, conducts debates between prosecution and defense, and delivers a final verdict with a confidence score.
 
