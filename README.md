@@ -1,8 +1,8 @@
-# Fact Court ⚖️
+# Fact Court 
 
 Fact Court is an advanced, multi-agent AI framework designed to transcend traditional 'one-shot' LLM fact-checkers. Instead of relying on a single prompt, Fact Court operates as a fully autonomous legal system. It orchestrates a sophisticated LangGraph architecture where specialized AI nodes—acting as Researchers, Experts, Prosecution, and Defense—actively scrape the web, assemble evidence, query a Pinecone vector database for historical precedents, and aggressively cross-examine each other's arguments before submitting the case to an impartial AI Judge. This rigorous, adversarial product engineering ensures high-scrutiny, bias-resistant verdicts with absolute transparency.
 
-🚀 **[Try the Live App Here: factcourt.streamlit.app](https://factcourt.streamlit.app)**
+ **[Try the Live App Here: factcourt.streamlit.app](https://factcourt.streamlit.app)**
 
 ## Architecture Flowchart
 
