@@ -14,6 +14,14 @@ st.sidebar.title("Fact Court Settings")
 provider = st.sidebar.selectbox("Select LLM Provider", ["OpenAI", "Google Gemini", "Hugging Face"])
 api_key = st.sidebar.text_input(f"Enter {provider} API Key", type="password")
 
+st.sidebar.markdown("---")
+@st.dialog("Fact Court Architecture Flowchart")
+def show_architecture_video():
+    st.video("architecture_flowchart.mp4")
+
+if st.sidebar.button("🎥 View Architecture Video"):
+    show_architecture_video()
+
 st.title("Fact Court")
 st.markdown("Enter your query below. The Fact Court will investigate, debate , investigate , cross check , credibility check ,  scrutiny , arugument , historical referencing , compliance  and deliver a verdict based on facts , real life realities , logical facts , data ,reasoning and rules and regulations .")
 
