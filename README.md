@@ -6,7 +6,7 @@ Fact Court is an AI-powered, multi-agent courtroom that investigates claims, gat
 
 Watch the video below to understand the multi-agent AI architecture powering Fact Court:
 
-https://github.com/arslanahmad429/FactCourt/raw/main/architecture_flowchart.mp4
+<video src="architecture_flowchart.mp4" controls="controls" style="max-width: 100%;"></video>
 
 ## Tech Stack
 - **LangGraph:** Orchestrates the multi-agent workflow (Researcher, Router, Expert, Lawyers, Validator, Judge).
