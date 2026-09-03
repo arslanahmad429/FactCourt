@@ -23,7 +23,9 @@ if st.sidebar.button("🎥 View Architecture Video"):
     show_architecture_video()
 
 st.title("Fact Court")
-st.markdown("Enter your query below. The Fact Court will investigate, debate , investigate , cross check , credibility check ,  scrutiny , arugument , historical referencing , compliance  and deliver a verdict based on facts , real life realities , logical facts , data ,reasoning and rules and regulations .")
+st.markdown("""
+**Enter your claim below.** Fact Court is not a typical one-shot AI. It operates as an autonomous, multi-agent legal system—deploying specialized AI 'lawyers' to scrape the web, gather real-time evidence, aggressively cross-examine each other's findings, reference a persistent vector database of past precedents, and finally present the rigorous adversarial debate to an impartial AI Judge for a highly scrutinized, bias-resistant verdict.
+""")
 
 import base64
 
